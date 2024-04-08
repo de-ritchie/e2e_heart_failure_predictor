@@ -9,11 +9,12 @@ from sklearn.linear_model import LogisticRegression
 
 from src.logger import get_logger, Logger
 from src.config import dataset_config, hyperparams_config
+from src.database.feature_store import FeatureStore
 from src.model.pipeline import BucketizerParams, ClassificationEvaluation
 from src.util import artifacts, evaluation, pre_process
 
 
-logger: Logger = get_logger()
+logger: Logger = get_logger(__name__)
 
 def _fetch_pipeline() -> Pipeline:
 
@@ -75,10 +76,15 @@ def exec_pipeline() -> None:
 
     try:
 
-        df = pd.read_csv('data/heart.csv')
+        # Connect to Feature Store
+        logger.info('Connect to Feature Store')
+        fs = FeatureStore()
+
+        # Load data from Feature Store
+        logger.info('Load data from Feature Store')
+        df: pd.DataFrame = fs.load_data_from_fs()
 
         logger.info('Fetching the training pipeline')
-
         model_pipe = _fetch_pipeline()
 
         logger.info('Splitting the dataset into Train & Test %s', df.columns)
@@ -99,7 +105,7 @@ def exec_pipeline() -> None:
             n_jobs=-1
         )
 
-        logger.info('Executing training pipeline ')
+        logger.info('Executing training pipeline')
         clf.fit(x_train, y_train)
 
         logger.info(
@@ -108,6 +114,7 @@ def exec_pipeline() -> None:
         best_params = clf.best_params_
         best_model_pipe = _fetch_pipeline()
 
+        logger.info('Executing training pipeline for the best params')
         best_model_pipe.set_params(**best_params)
         best_model_pipe.fit(x_train, y_train)
 
@@ -117,6 +124,8 @@ def exec_pipeline() -> None:
 
         logger.info('Saving the Evaluation reports as Artifacts')
         artifacts.store_classification_artifacts(clf_eval)
+
+        logger.info('Training pipeline execution completed')
 
     except Exception as ex:
         logger.exception(ex, stack_info=True)

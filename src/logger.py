@@ -1,10 +1,10 @@
 """This module is used to setup the logger"""
 import os
 import zipfile
+from pathlib import Path
 import logging
 from logging import Logger
 from logging.handlers import TimedRotatingFileHandler
-from pathlib import Path
 
 from src.config import core
 
@@ -20,16 +20,17 @@ def zipper(src, dest) -> None:
     )
     os.remove(src)
 
-def get_logger() -> Logger:
+def get_logger(name: str) -> Logger:
 
     """Setting up Logger configurations"""
 
     log_path = core.LOGS_PATH
     Path(log_path).mkdir(exist_ok=True)
 
-    logger: Logger = logging.getLogger(__name__)
+    logger: Logger = logging.getLogger(name)
     logger.setLevel(level=logging.INFO)
 
+    # File Handler
     file_formatter = logging.Formatter('%(asctime)s --- %(levelname)s --- %(message)s')
 
     file_handler = TimedRotatingFileHandler(
@@ -39,6 +40,11 @@ def get_logger() -> Logger:
     file_handler.rotator = zipper
     file_handler.setFormatter(file_formatter)
 
+    # Console Handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(file_formatter)
+
     logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
 
     return logger

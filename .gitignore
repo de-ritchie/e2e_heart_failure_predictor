@@ -164,3 +164,6 @@ logs/*
 
 # Artifacts
 artifacts/*
+
+# VSCode
+.vscode/*

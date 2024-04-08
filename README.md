@@ -14,11 +14,33 @@ There are 3 different pipelines used,
 
 - Python - version 3.10
 - Poetry
+- Setup cloud MongoDB & obtain the connection string
 
 #### Install dependencies
 
 `poetry install`
 
-#### Executing Training pipeline
+#### Set the environment variables
 
-`poetry run python -m src.main training`
+```
+MONGO_DB_CONNECTION_STRING=<mongo-db-uri>
+MONGO_DB_NAME=<db-name>
+FEAT_STORE_COL_NAME=<feature-store-collection-name>
+COMET_API_KEY=<comet-api-key>
+```
+
+Variables need to configured in the shell/cmd/powershell accordingly
+
+#### Executing Pipelines
+
+- Executing Feature pipeline
+
+  `poetry run python -m src.main feature_pipeline`
+
+- Executing Training pipeline
+
+  `poetry run python -m src.main training_pipeline`
+
+- Executing Inference pipeline: Inference pipeline is under developement
+
+###### Note: The order of pipeline execution matters
