@@ -9,6 +9,8 @@ jobs:
       MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
       FEAT_STORE_COL_NAME: ${{ secrets.FEAT_STORE_COL_NAME }}
       COMET_API_KEY: ${{ secrets.COMET_API_KEY }}
+      "KAGGLE_USERNAME": ${{ secrets.KAGGLE_USERNAME }}
+      "KAGGLE_KEY": ${{ secrets.KAGGLE_KEY }}
     runs-on: ubuntu-latest
     steps:
       - name: start
