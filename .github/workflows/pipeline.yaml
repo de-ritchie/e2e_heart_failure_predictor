@@ -13,19 +13,18 @@ jobs:
     steps:
       - name: start
         run: echo "Executing Feature Pipeline"
-      - name: checkout
-        uses: actions/checkout@v4
       - name: setup_python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - name: check_poetry_version
-        run: poetry --version
-      - name: install_poetry
+      - name: setup_poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           poetry --version
-          poetry install
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install_dependencies
+        run: poetry install
       - name: feature_pipeline
         run: poetry run python -m src.main feature_pipeline
       - name: training_pipeline
